@@ -1,0 +1,301 @@
+# 漫才台本作成CLI「manzai-writer」設計書
+
+## 概要
+
+プロの漫才師向けに、ネタ出し・構成・清書をサポートするCLIツール。
+
+## ターゲット
+
+- プロの漫才師
+- 3〜5分の標準的な漫才台本（賞レース・劇場向け）
+
+## 技術スタック
+
+- TypeScript / Node.js
+- Claude Code CLI連携（API直接呼び出しではなく）
+- ローカルファイル保存（将来クラウド対応を検討）
+
+---
+
+## コマンド体系
+
+### 基本構造
+
+```
+manzai [コマンド] [オプション]
+```
+
+### 主要コマンド
+
+| コマンド | 説明 | 例 |
+|---------|------|-----|
+| `manzai` | 対話モードで起動 | `manzai` |
+| `manzai idea <テーマ>` | テーマからアイデア発想 | `manzai idea "健康診断"` |
+| `manzai expand <file>` | アイデアを深掘り・連想展開 | `manzai expand ./ideas/001.json` |
+| `manzai draft <file>` | アイデアから台本下書き生成 | `manzai draft ./ideas/001.json` |
+| `manzai polish <file>` | 台本をブラッシュアップ | `manzai polish ./draft.manzai` |
+| `manzai chat` | 壁打ちモード（自由に相談） | `manzai chat` |
+| `manzai search <keyword>` | ネタ帳から検索 | `manzai search "病院"` |
+| `manzai config` | キャラ設定の管理 | `manzai config --edit` |
+
+### 対話モード
+
+```
+$ manzai
+漫才台本エディタ v1.0
+
+何をする？
+1. 新しいネタを考える (idea)
+2. アイデアを広げる (expand)
+3. 台本を書く (draft)
+4. 台本を磨く (polish)
+5. 壁打ち相談 (chat)
+6. ネタ帳を検索 (search)
+7. 設定 (config)
+>
+```
+
+---
+
+## データ構造
+
+### ディレクトリ構成
+
+```
+~/.manzai/
+├── config.json          # グローバル設定
+├── characters/          # キャラ設定
+│   └── default.json     # コンビのキャラ定義
+├── ideas/               # アイデア・ネタ帳
+│   ├── 001_健康診断.json
+│   └── 002_コンビニ.json
+├── drafts/              # 台本下書き
+│   └── 001_健康診断_v1.manzai
+└── scripts/             # 完成台本
+    └── 001_健康診断.manzai
+```
+
+### キャラ設定 (characters/default.json)
+
+```json
+{
+  "combiName": "コンビ名",
+  "boke": {
+    "name": "田中",
+    "personality": "天然、マイペース、独自の世界観",
+    "speechStyle": "敬語混じり、語尾が「〜なんですよ」",
+    "catchphrase": "いや関係ないんですけど"
+  },
+  "tsukkomi": {
+    "name": "山田",
+    "personality": "常識人、几帳面、ツッコミは鋭い",
+    "speechStyle": "関西弁、テンポ早め",
+    "catchphrase": "なんでやねん！"
+  }
+}
+```
+
+### 台本フォーマット (.manzai)
+
+```yaml
+---
+title: 健康診断
+duration: 4min
+created: 2026-01-24
+tags: [あるある, 病院]
+---
+
+# ツカミ
+山田: どうも〜！〇〇〇〇です！
+田中: お願いしますー
+山田: 最近ちょっと健康診断行ってきたんですけどね
+田中: ああ、いいですね健康診断
+
+# 本ネタ
+田中: |間:2秒| いや関係ないんですけど
+山田: もう関係ないんかい！ |動き:手を叩く|
+
+# オチ
+山田: もうええわ！ありがとうございましたー！
+```
+
+**フォーマット仕様:**
+- YAMLフロントマターでメタデータ管理
+- `|間:Xs|` `|動き:〇〇|` でト書き・間を構造化
+- セクション（ツカミ/本ネタ/オチ）を見出しで明示
+
+---
+
+## AI連携フロー
+
+### 基本方針
+
+Claude Code CLIを呼び出し、以下を常に含めたプロンプトを送る：
+- キャラ設定（口調・性格の一貫性のため）
+- 漫才の基本構造の知識（ツカミ→本ネタ→オチ）
+- 現在の作業コンテキスト
+
+### 各機能のAI活用
+
+**1. idea（アイデア発想）**
+```
+入力: テーマ「健康診断」
+     ↓
+AI: 切り口を5つ提案
+     ↓
+ユーザーが選択 → 選んだ切り口でさらに深掘り
+```
+
+**2. expand（連想展開）**
+```
+入力: アイデア「視力検査あるある」
+     ↓
+AI: 連想を広げる（複数候補）
+     ↓
+ユーザーが「使う/使わない」を選別 → ideas/に保存
+```
+
+**3. chat（壁打ち）**
+```
+自由対話形式でネタの相談・ブラッシュアップ
+```
+
+**4. draft / polish**
+```
+draft: アイデア群 → キャラ設定を反映した台本生成
+polish: 台本 → テンポ改善、言い回し調整、間の提案
+```
+
+### レスポンス形式
+
+AIからの提案は常に番号付きリストで返す：
+
+```
+[AI] 切り口の候補:
+1. 待ち時間が長すぎる系
+2. バリウムの苦しみ
+3. 視力検査の謎行動
+4. 問診票の質問がキワドイ
+5. 全部混ぜる
+
+どれを深掘りする？ (1-5, または複数: 1,3) >
+```
+
+---
+
+## 技術構成
+
+### プロジェクト構造
+
+```
+manzai-writer/
+├── package.json
+├── tsconfig.json
+├── src/
+│   ├── index.ts              # エントリーポイント
+│   ├── cli/
+│   │   ├── interactive.ts    # 対話モード
+│   │   └── commands/         # 各コマンド実装
+│   │       ├── idea.ts
+│   │       ├── expand.ts
+│   │       ├── draft.ts
+│   │       ├── polish.ts
+│   │       ├── chat.ts
+│   │       ├── search.ts
+│   │       └── config.ts
+│   ├── ai/
+│   │   ├── claude-code.ts    # Claude Code CLI 呼び出し
+│   │   └── prompts/          # プロンプトテンプレート
+│   │       ├── idea.ts
+│   │       ├── expand.ts
+│   │       ├── draft.ts
+│   │       └── polish.ts
+│   ├── data/
+│   │   ├── storage.ts        # ファイル読み書き
+│   │   ├── character.ts      # キャラ設定管理
+│   │   └── search.ts         # ネタ帳検索
+│   ├── parser/
+│   │   └── manzai.ts         # .manzai形式のパース/生成
+│   └── types/
+│       └── index.ts          # 型定義
+├── templates/
+│   └── default-character.json
+└── test/
+```
+
+### 主要依存ライブラリ
+
+| ライブラリ | 用途 |
+|-----------|------|
+| `commander` | CLIコマンド定義 |
+| `inquirer` | 対話型プロンプト |
+| `chalk` | ターミナル色付け |
+| `yaml` | .manzaiファイルのパース |
+| `fuse.js` | ネタ帳のあいまい検索 |
+
+### Claude Code呼び出し
+
+```typescript
+import { spawn } from 'child_process';
+
+async function askClaude(prompt: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const claude = spawn('claude', ['-p', prompt, '--output-format', 'text']);
+
+    let output = '';
+    claude.stdout.on('data', (data) => output += data);
+    claude.on('close', () => resolve(output));
+  });
+}
+```
+
+---
+
+## MVPスコープ
+
+### 優先度
+
+| 優先度 | 機能 | 理由 |
+|--------|------|------|
+| ★★★ | `manzai idea` | 最重要のネタ出し機能 |
+| ★★★ | `manzai chat` | 壁打ちはネタ出しの核 |
+| ★★★ | `manzai config` | キャラ設定は必須要件 |
+| ★★☆ | `manzai expand` | アイデア展開 |
+| ★★☆ | `manzai draft` | 台本生成 |
+| ★★☆ | 対話モード | 初心者UXのため |
+| ★☆☆ | `manzai polish` | 後からでも手動で可能 |
+| ★☆☆ | `manzai search` | ネタが溜まってから |
+
+### MVPゴール
+
+```
+「テーマを入れたら、キャラに合った台本の下書きが出てくる」
+```
+
+---
+
+## ユーザーストーリー
+
+**US-1: 初期設定**
+> 漫才師として、コンビのキャラ設定を登録したい。
+> 台本生成時に一貫した口調・性格が反映されるように。
+
+**US-2: テーマからアイデア出し**
+> 漫才師として、テーマを入力したらAIが複数の切り口を提案してほしい。
+> ネタの方向性を素早く決められるように。
+
+**US-3: 壁打ち相談**
+> 漫才師として、AIと自由に対話しながらネタを練りたい。
+> 一人で考えるより発想が広がるように。
+
+**US-4: アイデアの連想展開**
+> 漫才師として、1つのアイデアから関連ネタを広げたい。
+> ボケのバリエーションを増やせるように。
+
+**US-5: 台本下書き生成**
+> 漫才師として、アイデアから台本形式に起こしてほしい。
+> 清書の手間を減らせるように。
+
+**US-6: ネタの保存**
+> 漫才師として、出したアイデアを保存して後から見返したい。
+> 没ネタも資産として蓄積できるように。
