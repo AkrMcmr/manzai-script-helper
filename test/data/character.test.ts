@@ -11,7 +11,7 @@ describe('CharacterManager', () => {
   let testDir: string;
 
   beforeEach(async () => {
-    testDir = path.join(os.tmpdir(), `manzai-test-${Date.now()}`);
+    testDir = path.join(os.tmpdir(), `manzai-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
     storage = new Storage(testDir);
     await storage.init();
     manager = new CharacterManager(storage);
