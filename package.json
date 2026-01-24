@@ -1,0 +1,44 @@
+{
+  "name": "manzai-writer",
+  "version": "0.1.0",
+  "description": "漫才台本作成CLI",
+  "main": "dist/index.js",
+  "bin": {
+    "manzai": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node src/index.ts",
+    "test": "vitest",
+    "test:run": "vitest run"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AkrMcmr/manzai-script-helper.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AkrMcmr/manzai-script-helper/issues"
+  },
+  "homepage": "https://github.com/AkrMcmr/manzai-script-helper#readme",
+  "dependencies": {
+    "chalk": "^5.6.2",
+    "commander": "^14.0.2",
+    "fuse.js": "^7.1.0",
+    "inquirer": "^13.2.1",
+    "yaml": "^2.8.2"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^9.0.9",
+    "@types/node": "^25.0.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
+  }
+}
