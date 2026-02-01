@@ -1,5 +1,8 @@
 # manzai-writer
 
+[![npm version](https://badge.fury.io/js/manzai-writer.svg)](https://www.npmjs.com/package/manzai-writer)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 漫才台本作成を支援するCLIツール。Claude Code CLIと連携して、AIの力でネタ作りをサポートします。
 
 ## 特徴
@@ -18,10 +21,18 @@
 
 ## インストール
 
+### npmからインストール（推奨）
+
+```bash
+npm install -g manzai-writer
+```
+
+### ソースからインストール
+
 ```bash
 # リポジトリのクローン
-git clone https://github.com/yourusername/manzai-writer.git
-cd manzai-writer
+git clone https://github.com/AkrMcmr/manzai-script-helper.git
+cd manzai-script-helper
 
 # 依存関係のインストール
 npm install
@@ -29,7 +40,7 @@ npm install
 # ビルド
 npm run build
 
-# グローバルにインストール（オプション）
+# グローバルにインストール
 npm link
 ```
 
@@ -38,8 +49,6 @@ npm link
 ### 対話モード（推奨）
 
 ```bash
-node dist/index.js
-# または npm linkした場合
 manzai
 ```
 
@@ -54,19 +63,19 @@ manzai
 
 ```bash
 # 初期設定（最初に実行）
-node dist/index.js config init
+manzai config init
 
 # アイデア発想
-node dist/index.js idea "テーマ"
+manzai idea "テーマ"
 
 # 大喜利モード
-node dist/index.js ogiri
+manzai ogiri
 
 # 台本作成
-node dist/index.js draft
+manzai draft
 
 # 壁打ち相談
-node dist/index.js chat
+manzai chat
 ```
 
 ## 初回セットアップ
@@ -107,7 +116,7 @@ MIT License - 詳細は[LICENSE](LICENSE)ファイルを参照してください
 
 ## コントリビューション
 
-プルリクエストを歓迎します。大きな変更の場合は、まずissueを開いて変更内容について議論してください。
+プルリクエストを歓迎します。大きな変更の場合は、まず[issue](https://github.com/AkrMcmr/manzai-script-helper/issues)を開いて変更内容について議論してください。
 
 詳細は[CONTRIBUTING.md](CONTRIBUTING.md)を参照してください。
 
