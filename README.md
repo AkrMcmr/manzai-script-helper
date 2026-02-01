@@ -113,7 +113,7 @@ MIT License - 詳細は[LICENSE](LICENSE)ファイルを参照してください
 
 ## 作者
 
-[Your Name]
+Akira Machimura
 
 ## 謝辞
 
