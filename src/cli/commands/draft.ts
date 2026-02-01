@@ -39,7 +39,7 @@ export function createDraftCommand(): Command {
           {
             type: 'list',
             name: 'selected',
-            message: 'どのアイデアから台本を作りますか？',
+            message: '台本を作るアイデアを選択してください:',
             choices: ideas.map(i => ({
               name: `${i.id} - ${i.angle}`,
               value: i.id
@@ -71,7 +71,7 @@ export function createDraftCommand(): Command {
           {
             type: 'confirm',
             name: 'save',
-            message: 'この台本を保存しますか？',
+            message: 'この台本を保存しますか？ (Y/n)',
             default: true
           }
         ]);

@@ -9,7 +9,7 @@ export class ClaudeCode {
   buildArgs(prompt: string, options?: ClaudeOptions): string[] {
     const args = ['-p', prompt, '--output-format', 'text'];
 
-    if (options?.allowedTools !== undefined) {
+    if (options?.allowedTools !== undefined && options.allowedTools.length > 0) {
       args.push('--allowedTools', options.allowedTools.join(','));
     }
 
@@ -22,10 +22,24 @@ export class ClaudeCode {
 
   async ask(prompt: string, options?: ClaudeOptions): Promise<string> {
     return new Promise((resolve, reject) => {
-      const args = this.buildArgs(prompt, options);
+      // プロンプトを標準入力で渡すように変更
+      const args = ['--output-format', 'text'];
+
+      if (options?.allowedTools !== undefined && options.allowedTools.length > 0) {
+        args.push('--allowedTools', options.allowedTools.join(','));
+      }
+
+      if (options?.maxTurns) {
+        args.push('--max-turns', String(options.maxTurns));
+      }
+
       const claude = spawn('claude', args, {
         stdio: ['pipe', 'pipe', 'pipe']
       });
+
+      // プロンプトを標準入力に書き込む
+      claude.stdin.write(prompt);
+      claude.stdin.end();
 
       let output = '';
       let errorOutput = '';

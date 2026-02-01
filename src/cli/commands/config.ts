@@ -23,48 +23,48 @@ export function createConfigCommand(): Command {
         {
           type: 'input',
           name: 'combiName',
-          message: 'コンビ名は？'
+          message: 'コンビ名を入力してください:'
         },
         {
           type: 'input',
           name: 'bokeName',
-          message: 'ボケ担当の名前は？'
+          message: 'ボケ担当の名前を入力してください:'
         },
         {
           type: 'input',
           name: 'bokePersonality',
-          message: 'ボケの性格・キャラは？（例: 天然、マイペース）'
+          message: 'ボケの性格・キャラを入力してください（例: 天然、マイペース）:'
         },
         {
           type: 'input',
           name: 'bokeSpeechStyle',
-          message: 'ボケの口調は？（例: 敬語、関西弁）'
+          message: 'ボケの口調を入力してください（例: 敬語、関西弁）:'
         },
         {
           type: 'input',
           name: 'bokeCatchphrase',
-          message: 'ボケの決め台詞は？（なければ空欄）',
+          message: 'ボケの決め台詞を入力してください（なければEnterでスキップ）:',
           default: ''
         },
         {
           type: 'input',
           name: 'tsukkomiName',
-          message: 'ツッコミ担当の名前は？'
+          message: 'ツッコミ担当の名前を入力してください:'
         },
         {
           type: 'input',
           name: 'tsukkomiPersonality',
-          message: 'ツッコミの性格・キャラは？'
+          message: 'ツッコミの性格・キャラを入力してください:'
         },
         {
           type: 'input',
           name: 'tsukkomiSpeechStyle',
-          message: 'ツッコミの口調は？'
+          message: 'ツッコミの口調を入力してください:'
         },
         {
           type: 'input',
           name: 'tsukkomiCatchphrase',
-          message: 'ツッコミの決め台詞は？（なければ空欄）',
+          message: 'ツッコミの決め台詞を入力してください（なければEnterでスキップ）:',
           default: ''
         }
       ]);

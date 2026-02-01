@@ -22,7 +22,7 @@ export function createIdeaCommand(): Command {
       let theme = themeArg;
       if (!theme) {
         const answer = await inquirer.prompt([
-          { type: 'input', name: 'theme', message: 'テーマは？' }
+          { type: 'input', name: 'theme', message: 'テーマを入力してください:' }
         ]);
         theme = answer.theme;
       }
@@ -51,7 +51,7 @@ export function createIdeaCommand(): Command {
           {
             type: 'input',
             name: 'selection',
-            message: 'どれを深掘りする？ (番号、または複数: 1,3)'
+            message: '深掘りしたい切り口を選択してください (番号入力、複数選択可: 例 1,3):'
           }
         ]);
 
@@ -79,7 +79,7 @@ export function createIdeaCommand(): Command {
             {
               type: 'confirm',
               name: 'save',
-              message: 'このアイデアを保存しますか？',
+              message: 'このアイデアを保存しますか？ (Y/n)',
               default: true
             }
           ]);

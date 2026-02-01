@@ -8,7 +8,7 @@ export async function runInteractiveMode(): Promise<string | null> {
     {
       type: 'list',
       name: 'action',
-      message: '何をする？',
+      message: '実行したい操作を選択してください:',
       choices: [
         { name: '1. 新しいネタを考える (idea)', value: 'idea' },
         { name: '2. 大喜利でネタ出し (ogiri)', value: 'ogiri' },

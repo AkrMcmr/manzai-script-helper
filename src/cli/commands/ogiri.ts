@@ -57,7 +57,7 @@ export function createOgiriCommand(): Command {
           {
             type: 'input',
             name: 'answer',
-            message: '回答 >'
+            message: 'あなたの回答を入力してください:'
           }
         ]);
 
@@ -73,7 +73,7 @@ export function createOgiriCommand(): Command {
           {
             type: 'input',
             name: 'followUpAnswer',
-            message: '回答 >'
+            message: 'あなたの回答を入力してください:'
           }
         ]);
 
@@ -90,7 +90,7 @@ export function createOgiriCommand(): Command {
           {
             type: 'list',
             name: 'action',
-            message: '次は？',
+            message: '次の行動を選択してください:',
             choices: [
               { name: 'もう1問やる', value: 'continue' },
               { name: 'ここまでの回答でネタを組み立てる', value: 'summarize' },
@@ -125,7 +125,7 @@ export function createOgiriCommand(): Command {
             {
               type: 'confirm',
               name: 'save',
-              message: 'このアイデアを保存しますか？',
+              message: 'このアイデアを保存しますか？ (Y/n)',
               default: true
             }
           ]);
